@@ -4,7 +4,7 @@ import NavBar from '@/components/NavBar';
 import Hero from '@/components/Hero';
 import Dashboard from '@/components/Dashboard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Layers, Lightning, BarChart3, Code, Workflow } from 'lucide-react';
+import { ArrowRight, Layers, Zap, BarChart3, Code, Workflow } from 'lucide-react';
 
 const Index = () => {
   return (
@@ -43,7 +43,7 @@ const Index = () => {
             <Card>
               <CardHeader>
                 <div className="rounded-full bg-primary/10 w-10 h-10 flex items-center justify-center mb-2">
-                  <Lightning className="h-5 w-5 text-primary" />
+                  <Zap className="h-5 w-5 text-primary" />
                 </div>
                 <CardTitle>Resource Compression</CardTitle>
                 <CardDescription>

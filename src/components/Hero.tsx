@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import { useInViewAnimation } from '@/lib/animations';
 import { cn } from '@/lib/utils';
-import { ArrowUpRight, TrendingUp } from 'lucide-react';
+import { ArrowUpRight, TrendingUp, Zap } from 'lucide-react';
 
 interface HeroProps {
   className?: string;
