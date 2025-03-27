@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import MetricsCard from './MetricsCard';
 import PerformanceChart from './PerformanceChart';
@@ -9,6 +9,7 @@ import DeviceBreakdown from './DeviceBreakdown';
 import TimeComparison from './TimeComparison';
 import FilterBar from './FilterBar';
 import UrlInput from './UrlInput';
+import ApiKeyForm from './ApiKeyForm';
 import { usePageSpeed } from '@/hooks/usePageSpeed';
 import { 
   optimizationRecommendations,
@@ -16,9 +17,11 @@ import {
   timeComparisonData
 } from '@/lib/data';
 import { useInViewAnimation, useStaggeredAnimation } from '@/lib/animations';
-import { Laptop, Smartphone } from 'lucide-react';
+import { Laptop, Smartphone, AlertCircle } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { getApiKey } from '@/services/pagespeedService';
 
 interface DashboardProps {
   className?: string;
@@ -37,7 +40,8 @@ const Dashboard: React.FC<DashboardProps> = ({ className }) => {
     lastUpdated,
     deviceType,
     setDeviceType,
-    refetch
+    refetch,
+    hasApiKey
   } = usePageSpeed(url);
   
   const { containerRef, visibleItems } = useStaggeredAnimation(metrics.length || 4, 150);
@@ -62,17 +66,35 @@ const Dashboard: React.FC<DashboardProps> = ({ className }) => {
     setUrl(newUrl);
   };
 
+  const handleApiKeySet = () => {
+    refetch();
+  };
+
   return (
     <div className={cn('w-full max-w-7xl mx-auto px-4 py-8', className)}>
-      <h2 
-        ref={titleRef}
-        className={cn(
-          'text-3xl font-medium tracking-tight mb-8 transition-all duration-700',
-          isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        )}
-      >
-        Performance Dashboard
-      </h2>
+      <div className="flex justify-between items-center mb-8">
+        <h2 
+          ref={titleRef}
+          className={cn(
+            'text-3xl font-medium tracking-tight transition-all duration-700',
+            isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          )}
+        >
+          Performance Dashboard
+        </h2>
+        <ApiKeyForm onKeySet={handleApiKeySet} />
+      </div>
+      
+      {!hasApiKey && (
+        <Alert className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>API Key Required</AlertTitle>
+          <AlertDescription>
+            You need to set a Google PageSpeed API key to analyze real websites. 
+            Currently showing mock data. Click "Set API Key" to add your key.
+          </AlertDescription>
+        </Alert>
+      )}
       
       <UrlInput 
         onAnalyze={handleAnalyze} 

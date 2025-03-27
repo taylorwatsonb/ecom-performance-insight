@@ -7,7 +7,8 @@ import {
   mapPageSpeedToMetrics, 
   generateHistoricalData,
   generateBusinessImpacts,
-  PageSpeedResponse 
+  PageSpeedResponse,
+  getApiKey
 } from '@/services/pagespeedService';
 import { PerformanceMetric } from '@/lib/data';
 
@@ -33,11 +34,18 @@ interface PageSpeedResults {
   deviceType: 'mobile' | 'desktop';
   setDeviceType: (type: 'mobile' | 'desktop') => void;
   refetch: () => void;
+  hasApiKey: boolean;
 }
 
 export function usePageSpeed(url: string): PageSpeedResults {
   const [deviceType, setDeviceType] = useState<'mobile' | 'desktop'>('mobile');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [hasApiKey, setHasApiKey] = useState(() => Boolean(getApiKey()));
+  
+  // Check for API key on mount
+  useEffect(() => {
+    setHasApiKey(Boolean(getApiKey()));
+  }, []);
   
   const { 
     data, 
@@ -45,23 +53,29 @@ export function usePageSpeed(url: string): PageSpeedResults {
     error, 
     refetch 
   } = useQuery({
-    queryKey: ['pagespeed', url, deviceType],
+    queryKey: ['pagespeed', url, deviceType, hasApiKey],
     queryFn: async () => {
       try {
         const response = await runPageSpeedAnalysis(url, deviceType);
         setLastUpdated(new Date());
         return response;
       } catch (error) {
-        toast({
-          title: "Error fetching performance data",
-          description: error instanceof Error ? error.message : "An unknown error occurred",
-          variant: "destructive",
-        });
-        throw error;
+        if (error instanceof Error && error.message === 'API_KEY_MISSING') {
+          // Don't show toast for missing API key as we'll handle this case in the UI
+          throw error;
+        } else {
+          toast({
+            title: "Error fetching performance data",
+            description: error instanceof Error ? error.message : "An unknown error occurred",
+            variant: "destructive",
+          });
+          throw error;
+        }
       }
     },
     staleTime: 1000 * 60 * 15, // 15 minutes
     gcTime: 1000 * 60 * 60, // 1 hour
+    enabled: Boolean(url) && (hasApiKey || !hasApiKey), // Run even without API key to get mock data
   });
   
   const metrics = data ? mapPageSpeedToMetrics(data) : [];
@@ -78,5 +92,6 @@ export function usePageSpeed(url: string): PageSpeedResults {
     deviceType,
     setDeviceType,
     refetch,
+    hasApiKey,
   };
 }
