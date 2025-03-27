@@ -15,7 +15,7 @@ const Index = () => {
       <footer className="py-6 md:py-8 border-t">
         <div className="container flex flex-col items-center justify-center gap-4 md:flex-row">
           <p className="text-center text-sm leading-loose text-muted-foreground">
-            &copy; {new Date().getFullYear()} EcomPerform. All rights reserved.
+            &copy; {new Date().getFullYear()} EcomPerform. All rights reserved. Created by Taylor Watson.
           </p>
         </div>
       </footer>
