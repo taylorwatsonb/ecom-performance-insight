@@ -2,6 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Search, Settings, Database } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 interface NavBarProps {
   className?: string;
@@ -26,6 +27,8 @@ const NavBar: React.FC<NavBarProps> = ({ className }) => {
             className="h-8 w-[200px] bg-transparent focus:outline-none text-sm" 
           />
         </div>
+        
+        <ThemeToggle />
         
         <button className="flex items-center gap-1 rounded-full p-2 hover:bg-muted/50 transition-colors">
           <Settings className="h-5 w-5 text-muted-foreground" />

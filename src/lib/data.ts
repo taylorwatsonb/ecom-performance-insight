@@ -166,3 +166,43 @@ export const deviceData = {
     },
   ],
 };
+
+// Time comparison data
+export const timeComparisonData = {
+  currentPeriod: [
+    { name: 'LCP', value: 2.8 },
+    { name: 'FID', value: 95 },
+    { name: 'CLS', value: 0.12 },
+    { name: 'TTI', value: 3.2 },
+  ],
+  previousPeriod: [
+    { name: 'LCP', value: 3.5 },
+    { name: 'FID', value: 130 },
+    { name: 'CLS', value: 0.18 },
+    { name: 'TTI', value: 3.8 },
+  ],
+};
+
+// Filter options for the dashboard
+export const filterOptions = {
+  dateRanges: [
+    { label: 'Last 7 days', value: '7d' },
+    { label: 'Last 30 days', value: '30d' },
+    { label: 'Last 90 days', value: '90d' },
+    { label: 'Year to date', value: 'ytd' },
+    { label: 'Custom range', value: 'custom' },
+  ],
+  devices: [
+    { label: 'All devices', value: 'all' },
+    { label: 'Desktop', value: 'desktop' },
+    { label: 'Mobile', value: 'mobile' },
+    { label: 'Tablet', value: 'tablet' },
+  ],
+  pages: [
+    { label: 'All pages', value: 'all' },
+    { label: 'Homepage', value: 'home' },
+    { label: 'Product pages', value: 'products' },
+    { label: 'Category pages', value: 'categories' },
+    { label: 'Checkout', value: 'checkout' },
+  ],
+};
