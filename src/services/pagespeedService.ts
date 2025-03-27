@@ -7,8 +7,16 @@ const PAGESPEED_API_URL = 'https://www.googleapis.com/pagespeedonline/v5/runPage
 let API_KEY = '';
 
 export const setApiKey = (key: string) => {
-  API_KEY = key;
-  localStorage.setItem('pagespeed_api_key', key);
+  // Sanitize the key to handle cases where user might paste the full URL
+  let cleanKey = key.trim();
+  
+  // Don't save if it's the example placeholder
+  if (cleanKey === 'yourAPIKey') {
+    return '';
+  }
+  
+  API_KEY = cleanKey;
+  localStorage.setItem('pagespeed_api_key', cleanKey);
   return API_KEY;
 };
 
@@ -65,6 +73,11 @@ export async function runPageSpeedAnalysis(url: string, strategy: 'mobile' | 'de
     if (!key) {
       console.warn('No PageSpeed API key provided. Using mock data.');
       throw new Error('API_KEY_MISSING');
+    }
+    
+    if (key === 'yourAPIKey') {
+      console.warn('Example API key detected. Using mock data.');
+      throw new Error('API_KEY_INVALID');
     }
     
     const params = new URLSearchParams({

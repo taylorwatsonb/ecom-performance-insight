@@ -67,6 +67,7 @@ const Dashboard: React.FC<DashboardProps> = ({ className }) => {
   };
 
   const handleApiKeySet = () => {
+    // Force a refetch when the API key is set
     refetch();
   };
 

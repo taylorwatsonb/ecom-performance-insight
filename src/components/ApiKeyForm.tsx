@@ -43,8 +43,42 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onKeySet }) => {
       return;
     }
 
+    // Extract the actual key if the user pasted the entire URL
+    let keyToSave = trimmedKey;
+    if (trimmedKey.includes('key=')) {
+      try {
+        const url = new URL(trimmedKey);
+        const keyParam = url.searchParams.get('key');
+        if (keyParam) {
+          keyToSave = keyParam;
+        } else {
+          // Try to extract from regular string if not a valid URL
+          const keyMatch = trimmedKey.match(/[&?]key=([^&]+)/);
+          if (keyMatch && keyMatch[1]) {
+            keyToSave = keyMatch[1];
+          }
+        }
+      } catch (e) {
+        // Not a valid URL, try to extract directly
+        const keyMatch = trimmedKey.match(/[&?]key=([^&]+)/);
+        if (keyMatch && keyMatch[1]) {
+          keyToSave = keyMatch[1];
+        }
+      }
+    }
+
+    // If the user entered "yourAPIKey", show an error
+    if (keyToSave === 'yourAPIKey') {
+      toast({
+        title: "Invalid API Key",
+        description: "Please replace 'yourAPIKey' with your actual Google PageSpeed API key.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Save API key
-    setApiKey(trimmedKey);
+    setApiKey(keyToSave);
     
     toast({
       title: "API Key Saved",
@@ -52,7 +86,7 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onKeySet }) => {
     });
     
     if (onKeySet) {
-      onKeySet(trimmedKey);
+      onKeySet(keyToSave);
     }
     
     setOpen(false);
@@ -97,8 +131,11 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onKeySet }) => {
             placeholder="Enter your Google PageSpeed API key"
             className="mb-2"
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground mb-2">
             Your API key is stored locally in your browser.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Tip: You can paste the entire URL with your key, and we'll extract just the key part.
           </p>
         </div>
         

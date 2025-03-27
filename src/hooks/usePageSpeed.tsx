@@ -40,11 +40,13 @@ interface PageSpeedResults {
 export function usePageSpeed(url: string): PageSpeedResults {
   const [deviceType, setDeviceType] = useState<'mobile' | 'desktop'>('mobile');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [hasApiKey, setHasApiKey] = useState(() => Boolean(getApiKey()));
+  const [hasApiKey, setHasApiKey] = useState(false);
   
-  // Check for API key on mount
+  // Check for API key on mount and when it might change
   useEffect(() => {
-    setHasApiKey(Boolean(getApiKey()));
+    const key = getApiKey();
+    // Make sure key is not just the example placeholder
+    setHasApiKey(Boolean(key) && key !== 'yourAPIKey');
   }, []);
   
   const { 
@@ -56,21 +58,43 @@ export function usePageSpeed(url: string): PageSpeedResults {
     queryKey: ['pagespeed', url, deviceType, hasApiKey],
     queryFn: async () => {
       try {
+        // Force a recheck of the API key before making the request
+        const key = getApiKey();
+        if (key === 'yourAPIKey') {
+          setHasApiKey(false);
+          throw new Error('API_KEY_INVALID');
+        }
+        
         const response = await runPageSpeedAnalysis(url, deviceType);
         setLastUpdated(new Date());
         return response;
       } catch (error) {
-        if (error instanceof Error && error.message === 'API_KEY_MISSING') {
-          // Don't show toast for missing API key as we'll handle this case in the UI
-          throw error;
+        if (error instanceof Error) {
+          if (error.message === 'API_KEY_MISSING') {
+            // Don't show toast for missing API key as we'll handle this case in the UI
+            setHasApiKey(false);
+          } else if (error.message === 'API_KEY_INVALID') {
+            toast({
+              title: "Invalid API Key",
+              description: "The API key provided is invalid or is the example placeholder.",
+              variant: "destructive",
+            });
+            setHasApiKey(false);
+          } else {
+            toast({
+              title: "Error fetching performance data",
+              description: error.message || "An unknown error occurred",
+              variant: "destructive",
+            });
+          }
         } else {
           toast({
             title: "Error fetching performance data",
-            description: error instanceof Error ? error.message : "An unknown error occurred",
+            description: "An unknown error occurred",
             variant: "destructive",
           });
-          throw error;
         }
+        throw error;
       }
     },
     staleTime: 1000 * 60 * 15, // 15 minutes
@@ -82,6 +106,21 @@ export function usePageSpeed(url: string): PageSpeedResults {
   const historicalData = data ? generateHistoricalData(data) : { labels: [], datasets: [] };
   const businessImpacts = data ? generateBusinessImpacts(metrics) : [];
   
+  // Update the API key status when the user sets a new key
+  const handleApiKeyChange = () => {
+    const key = getApiKey();
+    const isValidKey = Boolean(key) && key !== 'yourAPIKey';
+    setHasApiKey(isValidKey);
+    return isValidKey;
+  };
+  
+  // Add an API key check to refetch
+  const refetchWithKeyCheck = () => {
+    if (handleApiKeyChange()) {
+      refetch();
+    }
+  };
+  
   return {
     metrics,
     historicalData,
@@ -91,7 +130,7 @@ export function usePageSpeed(url: string): PageSpeedResults {
     lastUpdated,
     deviceType,
     setDeviceType,
-    refetch,
+    refetch: refetchWithKeyCheck,
     hasApiKey,
   };
 }
