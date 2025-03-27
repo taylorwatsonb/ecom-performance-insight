@@ -41,7 +41,8 @@ const Dashboard: React.FC<DashboardProps> = ({ className }) => {
     deviceType,
     setDeviceType,
     refetch,
-    hasApiKey
+    hasApiKey,
+    isAnalyzing
   } = usePageSpeed(url);
   
   const { containerRef, visibleItems } = useStaggeredAnimation(metrics.length || 4, 150);
@@ -99,10 +100,21 @@ const Dashboard: React.FC<DashboardProps> = ({ className }) => {
       
       <UrlInput 
         onAnalyze={handleAnalyze} 
-        isLoading={isLoading} 
+        isLoading={isLoading || isAnalyzing} 
         lastUpdated={lastUpdated}
         onRefresh={refetch}
       />
+      
+      {isAnalyzing && !isLoading && (
+        <Alert className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Analysis in Progress</AlertTitle>
+          <AlertDescription>
+            Analyzing {url}. This may take longer for complex sites like e-commerce stores.
+            Please wait while we gather performance data.
+          </AlertDescription>
+        </Alert>
+      )}
       
       <div className="flex justify-between items-center mb-6">
         <FilterBar 
@@ -126,7 +138,7 @@ const Dashboard: React.FC<DashboardProps> = ({ className }) => {
         ref={containerRef}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
       >
-        {isLoading ? (
+        {(isLoading || isAnalyzing) ? (
           // Skeleton loaders for metrics cards
           Array(4).fill(0).map((_, index) => (
             <div key={index} className="rounded-lg border bg-card p-6 shadow-sm">
@@ -175,7 +187,7 @@ const Dashboard: React.FC<DashboardProps> = ({ className }) => {
         <DeviceBreakdown data={deviceData} />
       </div>
       
-      {!isLoading && historicalData.labels.length > 0 && (
+      {!isLoading && !isAnalyzing && historicalData.labels.length > 0 && (
         <div className="grid grid-cols-1 gap-6 mb-8">
           <PerformanceChart
             title="Performance Metrics Over Time"

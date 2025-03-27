@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, RotateCw } from 'lucide-react';
+import { ExternalLink, RotateCw, Loader2 } from 'lucide-react';
 
 interface UrlInputProps {
   onAnalyze: (url: string) => void;
@@ -22,7 +22,12 @@ const UrlInput: React.FC<UrlInputProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (url.trim()) {
-      onAnalyze(url.trim());
+      // Ensure URL has https:// prefix if not already present
+      let processedUrl = url.trim();
+      if (!processedUrl.startsWith('http://') && !processedUrl.startsWith('https://')) {
+        processedUrl = 'https://' + processedUrl;
+      }
+      onAnalyze(processedUrl);
     }
   };
 
@@ -36,7 +41,7 @@ const UrlInput: React.FC<UrlInputProps> = ({
           <div className="flex">
             <Input
               id="url-input"
-              type="url"
+              type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://www.example.com"
@@ -49,8 +54,15 @@ const UrlInput: React.FC<UrlInputProps> = ({
               variant="outline"
               size="icon"
               className="rounded-l-none border-l-0"
-              disabled={!url}
-              onClick={() => window.open(url, '_blank')}
+              disabled={!url || isLoading}
+              onClick={() => {
+                // Ensure URL has https:// prefix if not already present
+                let processedUrl = url.trim();
+                if (!processedUrl.startsWith('http://') && !processedUrl.startsWith('https://')) {
+                  processedUrl = 'https://' + processedUrl;
+                }
+                window.open(processedUrl, '_blank');
+              }}
             >
               <ExternalLink className="h-4 w-4" />
               <span className="sr-only">Open URL</span>
@@ -58,8 +70,19 @@ const UrlInput: React.FC<UrlInputProps> = ({
           </div>
         </div>
         <div className="flex gap-2">
-          <Button type="submit" disabled={isLoading || !url} className="md:w-auto w-full">
-            {isLoading ? 'Analyzing...' : 'Analyze Performance'}
+          <Button 
+            type="submit" 
+            disabled={isLoading || !url} 
+            className="md:w-auto w-full"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Analyzing...
+              </>
+            ) : (
+              'Analyze Performance'
+            )}
           </Button>
           <Button 
             type="button" 

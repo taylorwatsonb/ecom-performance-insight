@@ -36,12 +36,14 @@ interface PageSpeedResults {
   setDeviceType: (type: 'mobile' | 'desktop') => void;
   refetch: () => void;
   hasApiKey: boolean;
+  isAnalyzing: boolean; // New state for showing analysis in progress
 }
 
 export function usePageSpeed(url: string): PageSpeedResults {
   const [deviceType, setDeviceType] = useState<'mobile' | 'desktop'>('mobile');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false); // Track when analysis is in progress
   
   // Set the provided API key on first render
   useEffect(() => {
@@ -64,6 +66,8 @@ export function usePageSpeed(url: string): PageSpeedResults {
     queryKey: ['pagespeed', url, deviceType, hasApiKey],
     queryFn: async () => {
       try {
+        setIsAnalyzing(true); // Set analyzing state when query starts
+        
         // Force a recheck of the API key before making the request
         const key = getApiKey();
         if (key === 'yourAPIKey') {
@@ -71,9 +75,19 @@ export function usePageSpeed(url: string): PageSpeedResults {
           throw new Error('API_KEY_INVALID');
         }
         
-        const response = await runPageSpeedAnalysis(url, deviceType);
+        // Create a promise that times out after 30 seconds
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('Request timed out. The page may be too large or complex to analyze quickly.')), 30000);
+        });
+        
+        // Race between the actual request and the timeout
+        const response = await Promise.race([
+          runPageSpeedAnalysis(url, deviceType),
+          timeoutPromise
+        ]);
+        
         setLastUpdated(new Date());
-        return response;
+        return response as PageSpeedResponse;
       } catch (error) {
         if (error instanceof Error) {
           if (error.message === 'API_KEY_MISSING') {
@@ -86,6 +100,12 @@ export function usePageSpeed(url: string): PageSpeedResults {
               variant: "destructive",
             });
             setHasApiKey(false);
+          } else if (error.message.includes('timed out')) {
+            toast({
+              title: "Analysis Timed Out",
+              description: "The analysis took too long. Try a smaller page or switch to desktop mode which may be faster.",
+              variant: "destructive",
+            });
           } else {
             toast({
               title: "Error fetching performance data",
@@ -101,11 +121,14 @@ export function usePageSpeed(url: string): PageSpeedResults {
           });
         }
         throw error;
+      } finally {
+        setIsAnalyzing(false); // Reset analyzing state when query finishes
       }
     },
     staleTime: 1000 * 60 * 15, // 15 minutes
     gcTime: 1000 * 60 * 60, // 1 hour
     enabled: Boolean(url) && (hasApiKey || !hasApiKey), // Run even without API key to get mock data
+    retry: 1, // Only retry once to avoid excessive API calls
   });
   
   const metrics = data ? mapPageSpeedToMetrics(data) : [];
@@ -138,5 +161,6 @@ export function usePageSpeed(url: string): PageSpeedResults {
     setDeviceType,
     refetch: refetchWithKeyCheck,
     hasApiKey,
+    isAnalyzing,
   };
 }
