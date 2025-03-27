@@ -94,7 +94,13 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onKeySet }) => {
     toast({
       title: "API Key Saved",
       description: "Your Google PageSpeed API key has been saved securely.",
-      icon: <ShieldCheck className="h-4 w-4 text-green-500" />,
+      // Use a React element in description for the icon
+      description: (
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="h-4 w-4 text-green-500" />
+          <span>Your Google PageSpeed API key has been saved securely.</span>
+        </div>
+      )
     });
     
     if (onKeySet) {
