@@ -109,12 +109,17 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onKeySet }) => {
     setOpen(false);
   };
 
+  // Only show the API Key form if there's no key yet
+  if (hasKey) {
+    return null;
+  }
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
-          {hasKey ? <ShieldCheck className="h-4 w-4 text-green-500" /> : <KeyRound className="h-4 w-4" />}
-          {hasKey ? "Update API Key" : "Set API Key"}
+          <KeyRound className="h-4 w-4" />
+          Set API Key
         </Button>
       </SheetTrigger>
       <SheetContent className="sm:max-w-md">
@@ -186,4 +191,3 @@ const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ onKeySet }) => {
 };
 
 export default ApiKeyForm;
-

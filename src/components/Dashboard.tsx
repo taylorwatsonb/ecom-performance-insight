@@ -17,11 +17,12 @@ import {
   timeComparisonData
 } from '@/lib/data';
 import { useInViewAnimation, useStaggeredAnimation } from '@/lib/animations';
-import { Laptop, Smartphone, AlertCircle } from 'lucide-react';
+import { Laptop, Smartphone, AlertCircle, KeyRound } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getApiKey } from '@/services/pagespeedService';
+import { Button } from '@/components/ui/button';
 
 interface DashboardProps {
   className?: string;
@@ -85,6 +86,12 @@ const Dashboard: React.FC<DashboardProps> = ({ className }) => {
           Performance Dashboard
         </h2>
         <ApiKeyForm onKeySet={handleApiKeySet} />
+        {hasApiKey && (
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-green-500" />
+            <span className="text-sm text-muted-foreground">API Key Set</span>
+          </div>
+        )}
       </div>
       
       {!hasApiKey && (
