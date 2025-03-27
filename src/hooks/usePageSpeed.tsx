@@ -8,7 +8,8 @@ import {
   generateHistoricalData,
   generateBusinessImpacts,
   PageSpeedResponse,
-  getApiKey
+  getApiKey,
+  setApiKey
 } from '@/services/pagespeedService';
 import { PerformanceMetric } from '@/lib/data';
 
@@ -42,11 +43,16 @@ export function usePageSpeed(url: string): PageSpeedResults {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [hasApiKey, setHasApiKey] = useState(false);
   
-  // Check for API key on mount and when it might change
+  // Set the provided API key on first render
   useEffect(() => {
-    const key = getApiKey();
-    // Make sure key is not just the example placeholder
-    setHasApiKey(Boolean(key) && key !== 'yourAPIKey');
+    const currentKey = getApiKey();
+    if (!currentKey || currentKey === 'yourAPIKey') {
+      // Set the new API key
+      setApiKey('AIzaSyDJkFmwwQKjHgS-Lk28NnwAJ06NWEBSiKU');
+      setHasApiKey(true);
+    } else {
+      setHasApiKey(Boolean(currentKey) && currentKey !== 'yourAPIKey');
+    }
   }, []);
   
   const { 
