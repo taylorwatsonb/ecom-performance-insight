@@ -17,7 +17,7 @@ import {
   timeComparisonData
 } from '@/lib/data';
 import { useInViewAnimation, useStaggeredAnimation } from '@/lib/animations';
-import { Laptop, Smartphone, AlertCircle, KeyRound } from 'lucide-react';
+import { Laptop, Smartphone, AlertCircle, KeyRound, ShieldCheck } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
