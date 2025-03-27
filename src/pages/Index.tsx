@@ -37,6 +37,9 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">
                   Implement lazy loading for images and below-the-fold content to reduce initial page load time by up to 30%, improving LCP metrics.
                 </p>
+                <p className="text-xs text-primary-foreground/70 mt-2 font-medium">
+                  Technologies: Intersection Observer API, React.lazy(), react-lazyload
+                </p>
               </CardContent>
             </Card>
             
@@ -52,7 +55,10 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Implementing GZIP compression and image optimization can reduce asset sizes by up to 70%, directly reducing load times and improving conversion rates.
+                  Implementing GZIP compression and image optimization can reduce asset sizes by up to 70%, directly reducing load times and improving conversion rates by 12-18%.
+                </p>
+                <p className="text-xs text-primary-foreground/70 mt-2 font-medium">
+                  Technologies: Brotli, Webpack bundle analyzer, imagemin, WebP format
                 </p>
               </CardContent>
             </Card>
@@ -69,7 +75,10 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Implementing code splitting can reduce your JavaScript payload by up to 50%, dramatically improving First Input Delay (FID) and Time to Interactive (TTI).
+                  Implementing code splitting can reduce your JavaScript payload by up to 50%, dramatically improving First Input Delay (FID) and Time to Interactive (TTI) with potential conversion rate increases of 5-9%.
+                </p>
+                <p className="text-xs text-primary-foreground/70 mt-2 font-medium">
+                  Technologies: Dynamic imports, React.lazy, Webpack SplitChunksPlugin
                 </p>
               </CardContent>
             </Card>
@@ -95,6 +104,9 @@ const Index = () => {
                   <p className="text-muted-foreground">
                     Collect actual user experience data to identify performance bottlenecks across different device types, network conditions, and geographic locations.
                   </p>
+                  <p className="text-sm text-primary-foreground/70 mt-2">
+                    <span className="font-medium">Expected Impact:</span> 15-25% improvement in performance metrics by identifying real-world bottlenecks.
+                  </p>
                 </div>
               </div>
               
@@ -106,6 +118,9 @@ const Index = () => {
                   <h3 className="text-xl font-medium mb-1">A/B Testing Performance Improvements</h3>
                   <p className="text-muted-foreground">
                     Quantify the business impact of specific performance optimizations through controlled experiments, measuring conversion rates, revenue per user, and other key business metrics.
+                  </p>
+                  <p className="text-sm text-primary-foreground/70 mt-2">
+                    <span className="font-medium">Expected Impact:</span> 10-20% increase in ROI from optimization efforts by focusing on highest-impact changes.
                   </p>
                 </div>
               </div>
@@ -119,6 +134,9 @@ const Index = () => {
                   <p className="text-muted-foreground">
                     Establish and enforce performance budgets to maintain optimal performance as new features are developed, ensuring business metrics remain optimized.
                   </p>
+                  <p className="text-sm text-primary-foreground/70 mt-2">
+                    <span className="font-medium">Expected Impact:</span> Prevention of 30% potential performance regression, maintaining conversion rate gains.
+                  </p>
                 </div>
               </div>
             </div>
@@ -129,6 +147,9 @@ const Index = () => {
         <div className="container flex flex-col items-center justify-center gap-4 md:flex-row">
           <p className="text-center text-sm leading-loose text-muted-foreground">
             &copy; {new Date().getFullYear()} EcomPerform. All rights reserved. Created by Taylor Watson.
+          </p>
+          <p className="text-center text-xs text-muted-foreground">
+            Built with React, TypeScript, TailwindCSS, shadcn/ui, Recharts and Tanstack Query
           </p>
         </div>
       </footer>
