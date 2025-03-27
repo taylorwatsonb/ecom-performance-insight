@@ -1,8 +1,9 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { PerformanceMetric } from '@/lib/data';
 import { useInViewAnimation } from '@/lib/animations';
+import { ArrowUp, ChevronDown, ChevronUp, TrendingUp } from 'lucide-react';
 
 interface MetricsCardProps {
   metric: PerformanceMetric;
@@ -13,6 +14,7 @@ interface MetricsCardProps {
 const MetricsCard: React.FC<MetricsCardProps> = ({ metric, index, className }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInViewAnimation(cardRef, index * 100);
+  const [showBusinessImpact, setShowBusinessImpact] = useState(false);
   
   const getStatusColor = (status: PerformanceMetric['status']) => {
     switch (status) {
@@ -37,6 +39,21 @@ const MetricsCard: React.FC<MetricsCardProps> = ({ metric, index, className }) =
         return 'text-red-600 dark:text-red-400';
       default:
         return 'text-gray-600 dark:text-gray-400';
+    }
+  };
+
+  const getBusinessImpact = () => {
+    switch (metric.name) {
+      case 'LCP':
+        return "Reducing LCP by 1s can increase conversion rates by up to 7%";
+      case 'FID':
+        return "Improving FID by 100ms can reduce bounce rates by up to 5%";
+      case 'CLS':
+        return "Reducing layout shifts increases user trust and session duration";
+      case 'TTI':
+        return "Faster interactivity leads to 20% more page views per session";
+      default:
+        return "Performance improvements directly impact business metrics";
     }
   };
 
@@ -71,6 +88,21 @@ const MetricsCard: React.FC<MetricsCardProps> = ({ metric, index, className }) =
           / Target: {metric.target}{metric.unit}
         </span>
       </div>
+
+      <button 
+        onClick={() => setShowBusinessImpact(!showBusinessImpact)}
+        className="mt-4 flex items-center text-xs text-primary hover:underline"
+      >
+        <TrendingUp className="h-3 w-3 mr-1" />
+        <span>Business Impact</span>
+        {showBusinessImpact ? <ChevronUp className="h-3 w-3 ml-1" /> : <ChevronDown className="h-3 w-3 ml-1" />}
+      </button>
+
+      {showBusinessImpact && (
+        <div className="mt-2 p-2 text-xs bg-muted rounded-md text-muted-foreground">
+          {getBusinessImpact()}
+        </div>
+      )}
     </div>
   );
 };
