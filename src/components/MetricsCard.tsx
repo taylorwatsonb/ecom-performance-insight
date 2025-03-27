@@ -42,6 +42,7 @@ const MetricsCard: React.FC<MetricsCardProps> = ({ metric, index, className }) =
 
   return (
     <div 
+      id={`metric-${metric.name}`}
       ref={cardRef}
       className={cn(
         'rounded-lg border bg-card p-6 shadow-sm transition-all duration-500',
