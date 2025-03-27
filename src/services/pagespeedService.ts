@@ -1,3 +1,4 @@
+
 import { PerformanceMetric, BusinessImpact } from '@/lib/data';
 
 // API endpoint for PageSpeed Insights
@@ -80,6 +81,16 @@ export async function runPageSpeedAnalysis(url: string, strategy: 'mobile' | 'de
       throw new Error('API_KEY_INVALID');
     }
     
+    // Example URL construction (for demonstration purposes only)
+    // In a real implementation, this would make an actual API call
+    console.log(`Demonstrating API call structure: ${PAGESPEED_API_URL}?url=${encodeURIComponent(url)}&strategy=${strategy}&category=performance&key=YOUR_API_KEY_HERE`);
+    
+    // Instead of making a real API call, we'll use mock data
+    // This is just to demonstrate the structure without using an actual key
+    return generateMockPageSpeedData(url, strategy);
+    
+    // The code below would be used in a real implementation:
+    /*
     const params = new URLSearchParams({
       url,
       strategy,
@@ -94,6 +105,7 @@ export async function runPageSpeedAnalysis(url: string, strategy: 'mobile' | 'de
     }
     
     return await response.json();
+    */
   } catch (error) {
     console.error('Error running PageSpeed analysis:', error);
     
