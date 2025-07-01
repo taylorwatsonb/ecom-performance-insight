@@ -142,6 +142,5 @@ This project was created as a portfolio demonstration piece.
 
 ---
 
-**Created by [Your Name]** | [Your LinkedIn] | [Your Portfolio Website]
 
 *Built with React, TypeScript, TailwindCSS, shadcn/ui, Recharts, and Tanstack Query*
